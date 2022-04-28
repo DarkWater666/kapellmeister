@@ -1,5 +1,5 @@
 class <%= class_name %>::Configuration
-  attr_accessor <%= initialize_signatures.join(', ') %>
+  attr_accessor <%= initialize_signatures.merge(:path, :logger).join(', ') %>
 
   def initialize
     @path = ''
