@@ -11,11 +11,11 @@ module Kapellmeister
     argument :attributes, type: :array, default: [], banner: 'attribute'
 
     def copy_initializer_file
-      template 'initializers/add_service_initializer.rb', "config/initializers/#{file_name}.rb"
+      template 'initializers/third_party_initializer.rb', "config/initializers/#{file_name}.rb"
     end
 
     def copy_base_file
-      template 'lib/add_service.rb', "app/lib/#{file_name}.rb"
+      template 'lib/third_party.rb', "app/lib/#{file_name}.rb"
     end
 
     def copy_lib_folder
@@ -28,21 +28,21 @@ module Kapellmeister
     private
 
     def copy_client_file
-      template 'lib/add_service/client.rb', "app/lib/#{file_name}/client.rb"
+      template 'lib/third_party/client.rb', "app/lib/#{file_name}/client.rb"
     end
 
     def copy_configuration_file
-      template 'lib/add_service/configuration.rb', "app/lib/#{file_name}/configuration.rb"
+      template 'lib/third_party/configuration.rb', "app/lib/#{file_name}/configuration.rb"
     end
 
     def copy_responder_file
       return unless options[:responder]
 
-      template 'lib/add_service/responder.rb', "app/lib/#{file_name}/responder.rb"
+      template 'lib/third_party/responder.rb', "app/lib/#{file_name}/responder.rb"
     end
 
     def copy_routes_file
-      template 'lib/add_service/routes.yml', "app/lib/#{file_name}/routes.yml"
+      template 'lib/third_party/routes.yml', "app/lib/#{file_name}/routes.yml"
     end
 
     def initialize_signatures
