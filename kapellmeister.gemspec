@@ -28,5 +28,6 @@ Gem::Specification.new do |gem|
   gem.required_ruby_version = '>= 2.4.2'
 
   gem.add_development_dependency 'bundler', '~> 2.0', '>= 2.0.2'
-  gem.add_development_dependency 'rake', '~> 13.0', '>= 13.0.1'
+  gem.add_development_dependency 'redcarpet', '~> 1.17', '>= 1.17.0'
+  gem.add_development_dependency 'yard', '~> 0.7', '>= 0.7.5'
 end
