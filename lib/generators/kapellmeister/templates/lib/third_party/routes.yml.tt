@@ -1,0 +1,11 @@
+# NOTE: Small docs
+#   foo:                    => Wrapper for method
+#     bar:                  => Method name
+#       scheme:             => Scheme description
+#         method: POST      => Request type
+#         use_wrapper: true => Default true
+#         path: buz         => Real path
+#         mock:             => Mock for development
+#           token: blablabla
+#
+# Client.foo_bar { a: 'b' } => POST http://host/foo/buz DATA: { a: 'b' }

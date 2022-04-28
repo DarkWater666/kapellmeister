@@ -1,0 +1,16 @@
+class <%= class_name %>::Configuration
+  attr_accessor <%= initialize_signatures.join(', ') %>
+
+  def initialize
+    @path = ''
+    @logger = ::Logger.new(Rails.env.development? ? $stdout : 'log/<%=file_name %>.log')
+  end
+
+  def url
+    raise "No given host to #{self.class.name}" unless host
+
+    https = ssl.presence || true
+
+    "URI::HTTP#{https.to_b ? 'S' : ''}".build(host:, path: [path, version].join('/'))
+  end
+end

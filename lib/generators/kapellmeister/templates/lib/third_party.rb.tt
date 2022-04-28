@@ -1,0 +1,14 @@
+module <%= class_name %>
+  ROUTES = ::Kapellmeister::Base.routes_scheme_parse('app/lib/<%= file_name %>/routes.yml')
+
+  class << self
+    include ::Kapellmeister::Base
+
+  <%- initialize_signatures.each do |attr| -%>
+    <%= "def #{attr}" %>
+      <%= "@#{attr} ||= configuration.#{attr}" %>
+    <%= "end" %>
+
+  <%- end -%>
+  end
+end
