@@ -32,5 +32,5 @@ Gem::Specification.new do |gem|
   gem.add_development_dependency 'redcarpet', '~> 1.17', '>= 1.17.0'
   gem.add_development_dependency 'rubocop', '~> 1.21'
   gem.add_development_dependency 'yard', '~> 0.7', '>= 0.7.5'
-  gem.metadata['rubygems_mfa_required'] = 'true'
+  # gem.metadata['rubygems_mfa_required'] = 'true'
 end
