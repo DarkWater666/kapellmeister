@@ -7,7 +7,7 @@ This template-service allows you to define http requests to a third party throug
 Add kapellmeister to your Gemfile:
 
 ```ruby
-gem 'kapellmeister', '~> 0.0.1', require: false
+gem 'kapellmeister', '~> 0.4.1'
 ```
 
 ### Add new third party configuration:

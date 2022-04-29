@@ -12,7 +12,7 @@ class Kapellmeister::Responder
   def result
     error = !/2\d{2}/.match?(status.to_s)
 
-    Result.new(!error, parsed_body, { status: status }.merge(payload))
+    Result.new(!error, parsed_body, { status: }.merge(payload))
   rescue JSON::ParserError => e
     Result.new(false, e)
   end
@@ -20,7 +20,7 @@ class Kapellmeister::Responder
   private
 
   def parsed_body
-    return body if body.length == 0
+    return body if body.empty?
 
     case body
     when Hash then body
