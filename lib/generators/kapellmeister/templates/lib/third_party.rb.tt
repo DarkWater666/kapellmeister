@@ -10,5 +10,9 @@ module <%= class_name %>
     <%= "end" %>
 
   <%- end -%>
+
+    def ssl
+      @ssl ||= true
+    end
   end
 end
