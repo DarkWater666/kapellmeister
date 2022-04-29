@@ -2,17 +2,15 @@ require 'faraday_middleware'
 
 class Kapellmeister::Dispatcher
   def self.inherited(base)
-    base.extend(RequestsExtension)
+    super
+    base.extend(Kapellmeister::RequestsExtension)
 
     delegate :report, :configuration, :logger, to: base.module_parent
 
-    def custom_headers
+    lambda {
       @custom_headers ||= try(:headers) || {}
-    end
-
-    def custom_request_options
       @custom_request_options ||= try(:request_options) || {}
-    end
+    }.call
   end
 
   FailedResponse = Struct.new(:success?, :response, :payload)
@@ -37,6 +35,9 @@ class Kapellmeister::Dispatcher
     failed_response(details: e.message)
   end
 
+  def self.headers; end
+  def self.request_options; end
+
   private
 
   def connection(additional_headers:, requests_data:)
@@ -56,17 +57,16 @@ class Kapellmeister::Dispatcher
 
   def headers_generate(**additional)
     {
-      authority: Credentials.send_it.host,
       accept: 'application/json, text/plain, */*',
       **additional,
-      **custom_headers
+      **@custom_headers
     }
   end
 
   def requests_generate(**requests_data)
     {
       **requests_data,
-      **custom_request_options
+      **@custom_request_options
     }
   end
 
