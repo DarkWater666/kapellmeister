@@ -27,10 +27,15 @@ Gem::Specification.new do |gem|
 
   gem.required_ruby_version = '>= 2.4.2'
 
+  gem.add_dependency 'faraday', '~> 1.0'
+  gem.add_dependency 'faraday-cookie_jar', '~> 0.0.7'
+  gem.add_dependency 'faraday_middleware', '~> 1.2'
+  gem.add_dependency 'typhoeus', '~> 1.4.0'
+
   gem.add_development_dependency 'bundler', '~> 2.0', '>= 2.0.2'
   gem.add_development_dependency 'rake', '~> 13.0'
   gem.add_development_dependency 'redcarpet', '~> 1.17', '>= 1.17.0'
   gem.add_development_dependency 'rubocop', '~> 1.21'
   gem.add_development_dependency 'yard', '~> 0.7', '>= 0.7.5'
-  # gem.metadata['rubygems_mfa_required'] = 'true'
+  gem.metadata['rubygems_mfa_required'] = 'true'
 end
