@@ -6,11 +6,6 @@ class Kapellmeister::Dispatcher
     base.extend(Kapellmeister::RequestsExtension)
 
     delegate :report, :configuration, :logger, to: base.module_parent
-
-    lambda {
-      @custom_headers ||= try(:headers) || {}
-      @custom_request_options ||= try(:request_options) || {}
-    }.call
   end
 
   FailedResponse = Struct.new(:success?, :response, :payload)
@@ -35,8 +30,13 @@ class Kapellmeister::Dispatcher
     failed_response(details: e.message)
   end
 
-  def self.headers; end
-  def self.request_options; end
+  def headers
+    {}
+  end
+
+  def request_options
+    {}
+  end
 
   private
 
@@ -59,14 +59,14 @@ class Kapellmeister::Dispatcher
     {
       accept: 'application/json, text/plain, */*',
       **additional,
-      **@custom_headers
+      **headers
     }
   end
 
   def requests_generate(**requests_data)
     {
       **requests_data,
-      **@custom_request_options
+      **request_options
     }
   end
 
