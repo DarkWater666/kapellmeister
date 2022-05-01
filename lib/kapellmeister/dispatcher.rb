@@ -44,7 +44,6 @@ class Kapellmeister::Dispatcher
     ::Faraday.new(url: configuration.url,
                   headers: headers_generate(**additional_headers),
                   request: requests_generate(**requests_data)) do |faraday|
-      faraday.request :authorization, *authorization
       faraday.request :json, content_type: 'application/json'
       faraday.request :multipart
       faraday.response :logger, logger

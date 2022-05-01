@@ -4,12 +4,8 @@ module <%= class_name %>
   class << self
     include ::Kapellmeister::Base
 
-  <%- initialize_signatures.each do |attr| -%>
-    <%= "def #{attr}" %>
-      <%= "@#{attr} ||= configuration.#{attr}" %>
-    <%= "end" %>
+    delegate <%= initialize_signatures.map { |k| ":#{k}" }.join(', ') %>, to: :configuration
 
-  <%- end -%>
     def ssl
       @ssl ||= true
     end
