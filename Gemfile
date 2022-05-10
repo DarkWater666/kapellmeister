@@ -4,6 +4,7 @@ ruby '3.1.1'
 
 gemspec
 
+gem 'dry-schema'
 gem 'faraday'
 gem 'faraday_middleware'
 gem 'faraday-cookie_jar'

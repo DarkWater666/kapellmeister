@@ -27,6 +27,7 @@ Gem::Specification.new do |gem|
 
   gem.required_ruby_version = '>= 2.4.2'
 
+  gem.add_dependency 'dry-schema', '~> 1.9.1'
   gem.add_dependency 'faraday', '~> 1.0'
   gem.add_dependency 'faraday-cookie_jar', '~> 0.0.7'
   gem.add_dependency 'faraday_middleware', '~> 1.2'

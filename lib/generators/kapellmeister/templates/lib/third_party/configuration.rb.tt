@@ -11,6 +11,6 @@ class <%= class_name %>::Configuration
 
     https = ssl.presence || true
 
-    "URI::HTTP#{https.to_b ? 'S' : ''}".build(host:, path: [path, version].join('/'))
+    "URI::HTTP#{https.to_b ? 'S' : ''}".constantize.build(host:, path: [path, version].join('/'))
   end
 end

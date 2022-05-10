@@ -26,14 +26,18 @@ module Kapellmeister::Base
   end
 
   def self.routes_scheme_parse(path)
-    YAML.safe_load(ERB.new(File.read(path)).result, aliases: true, permitted_classes: [Time]).deep_symbolize_keys
+    template = ERB.new(File.read(path)).result
+    YAML.safe_load(template, aliases: true, permitted_classes: [Symbol, Date, Time]).deep_symbolize_keys
+  rescue Errno::ENOENT => e
+    warn "No such file or directory", path
+    {}
   end
 end
 
 def generate_routes(json_scheme)
-  json_scheme.each_with_object({}) do |(key, value), scheme|
+  json_scheme.dup.each_with_object({}) do |(key, value), scheme|
     scheme[key] = value.delete(:scheme) if (value.is_a?(Hash) && value.key?(:scheme)) || value.is_a?(String)
-    next if value.length.zero?
+    next if value.nil? || value.length.zero?
 
     generate_routes(value).map { |deep_key, deep_value| mapping(deep_key, deep_value, key, scheme) }
   end

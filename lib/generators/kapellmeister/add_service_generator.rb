@@ -50,3 +50,8 @@ module Kapellmeister
     end
   end
 end
+
+# ROUTES = Dir['app/lib/yandex_taxi/route_scheme/**/*.yml'].each_with_object({}) do |file, result|
+#   routes = ::Kapellmeister::Base.routes_scheme_parse(file)
+#   result.merge!(routes)
+# end
