@@ -6,7 +6,7 @@
 #         use_wrapper: true => Default true (* required)
 #         path: buz         => Real path (* required)
 #         body:             => Dry schema for checking parameters. If key doesn't exist nothing happens
-#         query:            => Query params. If key doesn't exist nothing happens
+#         query_params:     => Query params. If key doesn't exist nothing happens
 #         mock:             => Structure or Path to mock file for tests. If key doesn't exist nothing happens
 #
 # Client.foo_bar { a: 'b' } => POST http://host/foo/buz DATA: { a: 'b' }

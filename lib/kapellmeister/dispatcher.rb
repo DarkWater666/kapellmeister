@@ -49,7 +49,7 @@ class Kapellmeister::Dispatcher
 
   def headers_generate(**additional)
     {
-      accept: 'application/json, text/plain, */*, charset=utf-8',
+      # accept: 'application/json, text/plain, */*, charset=utf-8',
       **additional,
       **headers
     }
