@@ -7,7 +7,7 @@ module <%= class_name %>
     delegate <%= initialize_signatures.map { |k| ":#{k}" }.join(', ') %>, to: :configuration
 
     def ssl
-      @ssl ||= true
+      @ssl ||= (Rails.try(:env) || ENV['APP_ENV']) != 'development'
     end
   end
 end
