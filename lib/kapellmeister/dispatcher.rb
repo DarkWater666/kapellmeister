@@ -10,14 +10,14 @@ class Kapellmeister::Dispatcher
 
   FailedResponse = Struct.new(:success?, :response, :payload)
 
-  def connection_by(method_name, path, data = {}, query = {})
+  def connection_by(method_name, path, data = {})
     additional_headers = data.delete(:headers) || {}
     requests_data = data.delete(:request) || {}
 
-    generated_connection = connection(additional_headers:, requests_data:)
+    generated_connection = connection(additional_headers: additional_headers, requests_data: requests_data) # rubocop:disable Style/HashSyntax (for support ruby 2.4+)
 
     process generated_connection.run_request(method_name.downcase.to_sym, path, data.to_json, additional_headers)
-  rescue NoMethodError, NameError, RuntimeError
+  rescue NameError, RuntimeError
     raise "Library can't process method #{method_name} yet"
   rescue Faraday::ConnectionFailed, Faraday::TimeoutError => e
     failed_response(details: e.message)

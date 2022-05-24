@@ -28,8 +28,8 @@ module Kapellmeister::Base
   def self.routes_scheme_parse(path)
     template = ERB.new(File.read(path)).result
     YAML.safe_load(template, aliases: true, permitted_classes: [Symbol, Date, Time]).deep_symbolize_keys
-  rescue Errno::ENOENT => e
-    warn "No such file or directory", path
+  rescue Errno::ENOENT
+    warn 'No such file or directory', path
     {}
   end
 end

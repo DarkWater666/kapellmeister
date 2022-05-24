@@ -9,7 +9,9 @@ class <%= class_name %>::Configuration
   def url
     raise "No given host to #{self.class.name}" unless host
 
-    https = ssl.presence || true
+    https = true
+    https = ssl unless ssl.nil?
+    https = <%= class_name %>.ssl unless <%= class_name %>.ssl.nil?
 
     "URI::HTTP#{https.to_b ? 'S' : ''}".constantize.build(host:, path: [path, version].join('/'))
   end

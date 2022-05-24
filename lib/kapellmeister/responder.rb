@@ -12,7 +12,7 @@ class Kapellmeister::Responder
   def result
     error = !/2\d{2}/.match?(status.to_s)
 
-    Result.new(!error, parsed_body, { status: }.merge(payload))
+    Result.new(!error, parsed_body, { status: status }.merge(payload)) # rubocop:disable Style/HashSyntax (for support ruby 2.4+)
   rescue JSON::ParserError => e
     Result.new(false, e)
   end
