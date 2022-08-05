@@ -5,7 +5,7 @@ class Kapellmeister::Dispatcher
     super
     base.extend(Kapellmeister::RequestsExtension)
 
-    delegate :report, :configuration, :logger, to: base.module_parent
+    delegate :report, :logger, to: base.module_parent
   end
 
   FailedResponse = Struct.new(:success?, :response, :payload)
@@ -29,6 +29,10 @@ class Kapellmeister::Dispatcher
 
   def request_options
     {}
+  end
+
+  def configuration
+    self.class.module_parent.configuration
   end
 
   private
