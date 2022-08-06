@@ -10,16 +10,12 @@ module Kapellmeister::RequestsExtension
 
           full_path = generate_full_path(path, data)
 
-          new.connection_by(method, full_path, data)
+          connection_by(method, full_path, data)
         }.call(**request_data)
       end
     end
   rescue NoMethodError
     raise "You need to define #{self} class with connection_by method"
-  end
-
-  def self.extended(base)
-    base.module_parent.requests.each(&request_processing)
   end
 end
 

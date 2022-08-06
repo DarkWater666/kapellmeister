@@ -1,27 +1,20 @@
 require 'faraday_middleware'
+require_relative './requests_extension'
 
 class Kapellmeister::Dispatcher
+  include Kapellmeister::RequestsExtension
+  delegate :request_processing, to: Kapellmeister::RequestsExtension
+
+  def initialize
+    self.class.module_parent.requests.each(&request_processing)
+  end
+
   def self.inherited(base)
     super
-    base.extend(Kapellmeister::RequestsExtension)
-
     delegate :report, :logger, to: base.module_parent
   end
 
   FailedResponse = Struct.new(:success?, :response, :payload)
-
-  def connection_by(method_name, path, data = {})
-    additional_headers = data.delete(:headers) || {}
-    requests_data = data.delete(:request) || {}
-
-    generated_connection = connection(additional_headers: additional_headers, requests_data: requests_data) # rubocop:disable Style/HashSyntax (for support ruby 2.4+)
-
-    process generated_connection.run_request(method_name.downcase.to_sym, path, data.to_json, additional_headers)
-  rescue NameError, RuntimeError
-    raise "Library can't process method #{method_name} yet"
-  rescue Faraday::ConnectionFailed, Faraday::TimeoutError => e
-    failed_response(details: e.message)
-  end
 
   def headers
     {}
@@ -37,10 +30,23 @@ class Kapellmeister::Dispatcher
 
   private
 
+  def connection_by(method_name, path, data = {})
+    additional_headers = data.delete(:headers) || {}
+    requests_data = data.delete(:request) || {}
+
+    generated_connection = connection(additional_headers: additional_headers, requests_data: requests_data) # rubocop:disable Style/HashSyntax (for support ruby 2.4+)
+
+    process generated_connection.run_request(method_name.downcase.to_sym, path, data.to_json, additional_headers)
+  rescue NameError, RuntimeError
+    raise "Library can't process method #{method_name} yet"
+  rescue Faraday::ConnectionFailed, Faraday::TimeoutError => e
+    failed_response(details: e.message)
+  end
+
   def connection(additional_headers:, requests_data:)
-    ::Faraday.new(url: configuration.url,
-                  headers: headers_generate(**additional_headers),
-                  request: requests_generate(**requests_data)) do |faraday|
+    @connection ||= ::Faraday.new(url: configuration.url,
+                                  headers: headers_generate(**additional_headers),
+                                  request: requests_generate(**requests_data)) do |faraday|
       faraday.request :json, content_type: 'application/json; charset=utf-8'
       faraday.request :multipart
       faraday.response :logger, logger
