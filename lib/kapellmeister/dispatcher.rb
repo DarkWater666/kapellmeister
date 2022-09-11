@@ -2,11 +2,13 @@ require 'faraday_middleware'
 require_relative './requests_extension'
 
 class Kapellmeister::Dispatcher
-  include Kapellmeister::RequestsExtension
-  delegate :request_processing, to: Kapellmeister::RequestsExtension
+  def self.new(**args)
+    main_klass = self.module_parent.name.delete('::')
 
-  def initialize
-    self.class.module_parent.requests.each(&request_processing)
+    self.module_parent.requests.each do |request|
+      self.include Kapellmeister::RequestsExtension.request_processing(main_klass, request)
+    end
+    super(**args)
   end
 
   def self.inherited(base)

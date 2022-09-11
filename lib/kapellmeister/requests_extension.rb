@@ -1,6 +1,12 @@
 module Kapellmeister::RequestsExtension
-  def self.request_processing
-    proc do |name, request_data|
+  def self.request_processing(klass, (name, request_data))
+    mod = if Object.const_defined?("#{self}::#{klass}InstanceMethods")
+            const_get("#{self}::#{klass}InstanceMethods")
+          else
+            const_set("#{klass}InstanceMethods", Module.new)
+          end
+
+    mod.module_eval do
       define_method name do |data = {}|
         proc { |method:, path: nil, body: {}, query_params: {}, mock: ''|
           if (Rails.try(:env) || ENV.fetch('APP_ENV', nil)) == 'test'
@@ -17,6 +23,8 @@ module Kapellmeister::RequestsExtension
         }.call(**request_data)
       end
     end
+
+    mod
   rescue NoMethodError
     raise "You need to define #{self} class with connection_by method"
   end
