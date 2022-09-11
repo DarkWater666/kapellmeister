@@ -2,9 +2,12 @@ module Kapellmeister::RequestsExtension
   def self.request_processing
     proc do |name, request_data|
       define_method name do |data = {}|
-        proc { |method:, path:, body: {}, query_params: {}, mock: ''|
-          return ::Kapellmeister::Base.routes_scheme_parse(mock) if (Rails.try(:env) || ENV['APP_ENV']) == 'test'
+        proc { |method:, path: nil, body: {}, query_params: {}, mock: ''|
+          if (Rails.try(:env) || ENV.fetch('APP_ENV', nil)) == 'test'
+            return ::Kapellmeister::Base.routes_scheme_parse(mock)
+          end
 
+          data = query_params.compact_blank.merge(data)
           valid_body?(data, body)
           valid_query?(data, query_params)
 
@@ -21,10 +24,15 @@ end
 
 def generate_full_path(original_path, data)
   path = generate_path(original_path, data)
-  [path, data.delete(:query_params)&.to_query].compact_blank!.join('?')
+  query = data.delete(:query_params)&.to_query
+  return "?#{query}" unless path
+
+  [path, query].compact_blank!.join('?')
 end
 
 def generate_path(original_path, data)
+  return nil unless original_path
+
   original_path.split('/').map do |part|
     next part unless part.include? '%<'
 
@@ -36,7 +44,7 @@ def valid_body?(data, body)
   return if body.blank? || body.is_a?(Hash)
 
   schema = Object.const_get(body).schema
-  result = schema.(data)
+  result = schema.call(data)
   return data if result.success?
 
   raise ArgumentError, result.errors.to_h
@@ -44,6 +52,7 @@ end
 
 def valid_query?(data, query)
   return if query.blank?
+
   required_keys = query.keys
 
   from_data = data.slice(*required_keys)
@@ -51,8 +60,8 @@ def valid_query?(data, query)
   data[:query_params] ||= {}
   data[:query_params] = data[:query_params].to_h.merge!(from_data)
 
-  diffirent_keys = data[:query_params].transform_keys(&:to_sym)
-  return if required_keys.all? { |key| diffirent_keys.has_key? key.to_sym }
+  different_keys = data[:query_params].transform_keys(&:to_sym)
+  return if required_keys.all? { |key| different_keys.key? key.to_sym }
 
   raise ArgumentError, "Query params needs keys #{required_keys}"
 end

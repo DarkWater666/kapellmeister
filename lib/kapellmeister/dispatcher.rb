@@ -24,6 +24,10 @@ class Kapellmeister::Dispatcher
     {}
   end
 
+  def query_params
+    {}
+  end
+
   def configuration
     self.class.module_parent.configuration
   end
@@ -33,12 +37,15 @@ class Kapellmeister::Dispatcher
   def connection_by(method_name, path, data = {})
     additional_headers = data.delete(:headers) || {}
     requests_data = data.delete(:request) || {}
+    data_json = data.blank? ? '' : data.to_json
 
     generated_connection = connection(additional_headers: additional_headers, requests_data: requests_data) # rubocop:disable Style/HashSyntax (for support ruby 2.4+)
 
-    process generated_connection.run_request(method_name.downcase.to_sym, path, data.to_json, additional_headers)
-  rescue NameError, RuntimeError
-    raise "Library can't process method #{method_name} yet"
+    process generated_connection.run_request(method_name.downcase.to_sym,
+                                             url_with_params(path),
+                                             data_json,
+                                             additional_headers)
+
   rescue Faraday::ConnectionFailed, Faraday::TimeoutError => e
     failed_response(details: e.message)
   end
@@ -51,6 +58,7 @@ class Kapellmeister::Dispatcher
       faraday.request :multipart
       faraday.response :logger, logger
       faraday.response :json, content_type: 'application/json; charset=utf-8'
+      faraday.use FaradayMiddleware::FollowRedirects, limit: 5
       faraday.adapter :typhoeus do |http|
         http.timeout = 20
       end
@@ -72,8 +80,21 @@ class Kapellmeister::Dispatcher
     }
   end
 
+  def path_generate(path)
+    path.query_parameters
+  end
+
   def process(data)
     report(data).result
+  end
+
+  def url_with_params(url)
+    return url if query_params.blank?
+
+    uri = URI(url)
+    params = URI.decode_www_form(uri.query || '').to_h.merge(query_params)
+    uri.query = URI.encode_www_form(params)
+    uri.to_s
   end
 
   def failed_response(**args)
