@@ -8,12 +8,14 @@ module Kapellmeister::RequestsExtension
 
     mod.module_eval do
       define_method name do |data = {}|
+        data.deep_compact!
+
         proc { |method:, path: nil, body: {}, query_params: {}, mock: ''|
           if (Rails.try(:env) || ENV.fetch('APP_ENV', nil)) == 'test'
             return ::Kapellmeister::Base.routes_scheme_parse(mock)
           end
 
-          data = query_params.compact_blank.merge(data)
+          data = query_params.compact_blank.merge(data) if data.is_a?(Hash)
           valid_body?(data, body)
           valid_query?(data, query_params)
 
@@ -45,7 +47,7 @@ def generate_path(original_path, data)
     next part unless part.include? '%<'
 
     data.delete(part.match(/%<(.*)>/).to_a.last.to_sym)
-  end.join('/')
+  end.join('/').squeeze('/')
 end
 
 def valid_body?(data, body)

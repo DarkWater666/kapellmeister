@@ -91,6 +91,10 @@ class Kapellmeister::Dispatcher
   end
 
   def url_with_params(url)
+    url = url.split('/').map do |url_part|
+      url_part.ascii_only? ? url_part : CGI.escape(url_part)
+    end.join('/')
+
     return url if query_params.blank?
 
     uri = URI(url)

@@ -44,7 +44,7 @@ def generate_routes(json_scheme)
 end
 
 def mapping(deep_key, deep_value, key, scheme)
-  old_path = deep_value[:path]
+  old_path = deep_value[:path].presence || deep_key.to_s
   name = old_path.split('/').map { |part| part.gsub(/%<.*?>/, '') }.reject(&:empty?)
   deep_value[:path] = [key, old_path].join('/')
 
