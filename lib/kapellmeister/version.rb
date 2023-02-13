@@ -1,3 +1,3 @@
 module Kapellmeister
-  VERSION = '0.9.4'.freeze
+  VERSION = '0.9.6'.freeze
 end
