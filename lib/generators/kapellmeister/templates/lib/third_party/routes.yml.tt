@@ -3,8 +3,8 @@
 #     bar:                  => Method name
 #       scheme:             => Scheme description
 #         method: POST      => Request type (* required)
-#         use_wrapper: true => Default true (* required)
-#         path: buz         => Real path (* required)
+#         use_wrapper: true => Default true
+#         path: buz         => Real path
 #         body:             => Dry schema for checking parameters. If key doesn't exist nothing happens
 #         query_params:     => Query params. If key doesn't exist nothing happens
 #         mock:             => Structure or Path to mock file for tests. If key doesn't exist nothing happens

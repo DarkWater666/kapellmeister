@@ -7,7 +7,7 @@ This template-service allows you to define http requests to a third party throug
 Add kapellmeister to your Gemfile:
 
 ```ruby
-gem 'kapellmeister', '~> 0.4.1'
+gem 'kapellmeister', '~> 0.9.6'
 ```
 
 ### Add new third party configuration:
@@ -15,10 +15,15 @@ gem 'kapellmeister', '~> 0.4.1'
     $ bin/rails g kapellmeister:add_service %<ThirdPartyName> %<options> --%<flags>
 
 `ThirdPartyName` — Pass the lib name, either CamelCased or under_scored
-`options` — Pass the configuration keys, usually host, key and version
-`flags` — This generator have one flag. This flag is `responder`, default is `false`. If you set to `true` will be generated responder.rb used for parsing response.
 
-All the instructions are lightweight files in your /lib folder. Here's the example of structure:
+`options` — Pass the configuration keys, usually host, key and version
+
+`flags` — This generator have one flag.
+This flag is `responder`, default is `false`.
+If you set it to `true` will be generated responder.rb used for parsing response.
+
+All the instructions are lightweight files in your /lib folder.
+Here's the example of structure:
 
 ``` Capfile
 └── app
@@ -51,14 +56,59 @@ Folder contains `routes scheme`, `client`, `configuration` and optional `respond
 foo:                     => Wrapper for method
   bar:                   => Method name
     scheme:              => Scheme description
-      method: POST       => Request type
-      use_wrapper: true  => Default true
+      method: POST       => Request type (* required)
+      use_wrapper: true  => Wrap method for uniqueness. Default true
       path: buz          => Real path
-      mock:              => Mock for development
-        token: blablabla
+      body:              => Dry schema for checking parameters. If key doesn't exist nothing happens
+      query_params:      => Query params. If key doesn't exist nothing happens
+      mock:              => Structure or Path to mock file for tests. If key doesn't exist nothing happens
 
 # ThirdParty::Client.foo_bar { a: 'b' } => POST https://third_party.com/foo/buz DATA: { a: 'b' }
 ```
+#### Parameters explanation:
+
+`body` — You can use dry-schema for validate request parameters.
+If this key doesn't exist validation will be skipped.
+For example:
+
+```yaml
+body: CreateSchema
+```
+
+`query_params` — If request needs a query string.
+Both arrays and hashes work.
+If this key doesn't exist validation will be skipped.
+For example:
+
+```yaml
+query_params:
+  dbAct: getCities       => For known and unchangeable parameters
+  optional:              => For optional parameters
+    - city
+    - state
+
+# /api?dbAct=getCities&city=Tokio
+```
+```yaml
+query_params:
+  - dbAct: getTarif
+  - org                => For required parameters
+  - dest
+  - weight
+  
+# /api?dbAct=getTarif&org=Tokio&dest=Beijing&weight=100
+```
+
+`mock` — If you need real requests don't pass during the testing,
+then you can replace them with mocks.
+Both yaml structure or path to yaml file can be used.
+For example:
+
+```yaml
+mock: spec/mocks/http_clients/public/cities.yml
+```
+
+#### Generated files explanation
 
 `client.rb` — Nested from main dispatcher and you can add some configuration methods, custom headers and requests options.
 
