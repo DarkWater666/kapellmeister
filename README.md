@@ -63,7 +63,9 @@ foo:                     => Wrapper for method
       query_params:      => Query params. If key doesn't exist nothing happens
       mock:              => Structure or Path to mock file for tests. If key doesn't exist nothing happens
 
-# ThirdParty::Client.foo_bar { a: 'b' } => POST https://third_party.com/foo/buz DATA: { a: 'b' }
+# client = ThirdParty::Client.new
+# client.foo_bar { a: 'b' } 
+# => POST https://third_party.com/foo/buz DATA: { a: 'b' }
 ```
 #### Parameters explanation:
 
@@ -110,7 +112,7 @@ mock: spec/mocks/http_clients/public/cities.yml
 
 #### Generated files explanation
 
-`client.rb` — Nested from main dispatcher and you can add some configuration methods, custom headers and requests options.
+`client.rb` — Nested from main dispatcher and you can add some configuration methods, custom headers, requests options, query parameters.
 
 `configuration.rb` — Add path to third party, config url and logger
 
