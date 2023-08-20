@@ -44,7 +44,7 @@ class Kapellmeister::Dispatcher
     generated_connection = connection(additional_headers: additional_headers, requests_data: requests_data) # rubocop:disable Style/HashSyntax (for support ruby 2.4+)
 
     process generated_connection.run_request(method_name.downcase.to_sym,
-                                             url_with_params(path),
+                                             url_with_params(path, data, method_name),
                                              data_json,
                                              additional_headers)
 
@@ -90,15 +90,21 @@ class Kapellmeister::Dispatcher
     report(data).result
   end
 
-  def url_with_params(url)
+  def url_with_params(url, data, method_name)
     url = url.split('/').map do |url_part|
       url_part.ascii_only? ? url_part : CGI.escape(url_part)
     end.join('/')
 
+    url = url_repacking(url, data) if method_name == 'GET'
+
     return url if query_params.blank?
 
+    url_repacking(url, query_params)
+  end
+
+  def url_repacking(url, queries)
     uri = URI(url)
-    params = URI.decode_www_form(uri.query || '').to_h.merge(query_params)
+    params = URI.decode_www_form(uri.query || '').to_h.merge(queries)
     uri.query = URI.encode_www_form(params)
     uri.to_s
   end

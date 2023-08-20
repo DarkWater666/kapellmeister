@@ -41,6 +41,8 @@ def generate_routes(json_scheme)
 
     generate_routes(value).map { |deep_key, deep_value| mapping(deep_key, deep_value, key, scheme) }
   end
+rescue TypeError
+  raise "It seems like wrong routes scheme. #{json_scheme}"
 end
 
 def mapping(deep_key, deep_value, key, scheme)

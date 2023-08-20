@@ -63,7 +63,7 @@ end
 def generate_full_path(original_path, data)
   path = generate_path(original_path, data)
   query = data.delete(:query_params)&.to_query
-  return "?#{query}" unless path
+  return "?#{query}" if path.blank?
 
   [path, query].compact_blank!.join('?')
 end
