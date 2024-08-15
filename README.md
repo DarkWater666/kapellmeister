@@ -4,9 +4,9 @@
 ## Использование
 
 Добавьте kapellmeister в свой Gemfile:
-На данный момент послденяя версия 0.9.8 (Проект находится в стадии тестирования работоспособности, beta-test)
+На данный момент последняя версия 0.9.9.rc2 (Проект находится в стадии тестирования работоспособности, beta-test)
 ```ruby
-gem 'kapellmeister', '~> 0.9.8'
+gem 'kapellmeister', '~> 0.9.9.rc2'
 ```
 
 ### Добавьте новую конфигурацию для стороннего API:
@@ -82,7 +82,7 @@ body: DrySchema
 `query_params` — Если для запроса требуется query-параметры.
 Работают как массивы, так и руби-хэши.
 Если этот ключ не существует, то подстановки параметров и их проверки не будет.
-For example:
+Пример:
 
 ```yaml
 query_params:
@@ -134,9 +134,9 @@ This template-service allows you to define http requests to a third party throug
 ## Usage
 
 Add kapellmeister to your Gemfile:
-At the moment, the latest version is 0.9.8 (The project is in the stage of performance testing, beta-test)
+At the moment, the latest version is 0.9.9.rc2 (The project is in the stage of performance testing, beta-test)
 ```ruby
-gem 'kapellmeister', '~> 0.9.6'
+gem 'kapellmeister', '~> 0.9.9.rc2'
 ```
 
 ### Add a new configuration for the third-party API:
@@ -260,4 +260,4 @@ The gem is available as open source under the terms of the [MIT License](https:/
 
 ## Copyright
 
-Copyright (c) 2022 Denis Arushanov aka DarkWater
+Copyright (c) 2024 Denis Arushanov aka DarkWater

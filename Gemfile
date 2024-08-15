@@ -6,9 +6,9 @@ gemspec
 
 gem 'dry-schema'
 gem 'faraday'
-gem 'faraday_middleware'
+gem 'faraday-follow_redirects'
 gem 'faraday-cookie_jar'
-gem 'typhoeus'
+gem 'faraday-typhoeus'
 
 # debug
 group :development do
@@ -23,6 +23,6 @@ group :development, :test do
   gem 'rubocop', require: false
   gem 'rubocop-performance'
   gem 'rubocop-rspec'
-  gem 'rubycritic', require: false
+  gem 'rubycritic', '~> 4.9.1', require: false
   gem 'ruby_gntp'
 end

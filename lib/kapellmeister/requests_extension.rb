@@ -3,7 +3,7 @@ module Kapellmeister::RequestsExtension
     mod = if Object.const_defined?("#{self}::#{klass}InstanceMethods")
             const_get("#{self}::#{klass}InstanceMethods")
           else
-            const_set("#{klass}InstanceMethods", Module.new)
+            const_set(:"#{klass}InstanceMethods", Module.new)
           end
 
     mod.module_eval do
@@ -37,7 +37,7 @@ def parsed_query(params, data)
 
   hash_data, filtered_query = *split_hashes(params)
   required_empty_query, default_data = *hash_data.partition { |elem| elem.values.compact_blank.blank? }
-  data = Hash[filtered_query.zip].compact_blank.merge(data) if data.is_a?(Hash)
+  data = filtered_query.zip([]).to_h.compact_blank.merge(data) if data.is_a?(Hash)
   _optional_data, default_data = *split_optional(default_data)
   data = data.merge(default_data) if !data.blank? || !default_data.blank?
 
@@ -79,7 +79,7 @@ def generate_path(original_path, data)
 end
 
 def valid_body?(data, body)
-  return if body.blank? || body.is_a?(Hash)
+  return true if body.blank? || body.is_a?(Hash)
 
   schema = Object.const_get(body).schema
   result = schema.call(data)
@@ -89,7 +89,7 @@ def valid_body?(data, body)
 end
 
 def valid_query?(data, query)
-  return if query.blank?
+  return true if query.blank?
 
   required_keys = query.map(&:to_sym)
 
@@ -99,7 +99,7 @@ def valid_query?(data, query)
   data[:query_params] = data[:query_params].to_h.merge!(from_data)
 
   different_keys = data[:query_params].transform_keys(&:to_sym)
-  return if required_keys.all? { |key| different_keys.key? key.to_sym }
+  return true if required_keys.all? { |key| different_keys.key? key.to_sym }
 
   raise ArgumentError, "Query params needs keys #{required_keys}"
 end

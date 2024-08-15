@@ -1,12 +1,12 @@
-require 'faraday_middleware'
-require_relative './requests_extension'
+require 'faraday/follow_redirects'
+require_relative 'requests_extension'
 
 class Kapellmeister::Dispatcher
   def self.new(**args)
-    main_klass = self.module_parent.name.delete('::')
+    main_klass = module_parent.name&.delete('::')
 
-    self.module_parent.requests.each do |request|
-      self.include Kapellmeister::RequestsExtension.request_processing(main_klass, request)
+    module_parent.requests.each do |request|
+      include Kapellmeister::RequestsExtension.request_processing(main_klass, request)
     end
     super(**args)
   end
@@ -60,7 +60,7 @@ class Kapellmeister::Dispatcher
       faraday.request :multipart
       faraday.response :logger, logger
       faraday.response :json, content_type: 'application/json; charset=utf-8'
-      faraday.use FaradayMiddleware::FollowRedirects, limit: 5
+      faraday.response :follow_redirects
       faraday.adapter :typhoeus do |http|
         http.timeout = 20
       end

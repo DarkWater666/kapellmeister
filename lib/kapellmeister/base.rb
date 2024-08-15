@@ -37,7 +37,7 @@ end
 def generate_routes(json_scheme)
   json_scheme.dup.each_with_object({}) do |(key, value), scheme|
     scheme[key] = value.delete(:scheme) if (value.is_a?(Hash) && value.key?(:scheme)) || value.is_a?(String)
-    next if value.nil? || value.length.zero?
+    next if value.nil? || value.empty?
 
     generate_routes(value).map { |deep_key, deep_value| mapping(deep_key, deep_value, key, scheme) }
   end
