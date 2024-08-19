@@ -47,14 +47,35 @@ end
 
 def mapping(deep_key, deep_value, key, scheme)
   old_path = deep_value[:path].presence || deep_key.to_s
-  name = old_path.split('/').map { |part| part.gsub(/%<.*?>/, '') }.reject(&:empty?)
-  deep_value[:path] = [key, old_path].join('/')
+  name = old_path.to_s.split('/').map { |part| part.gsub(/%<.*?>/, '') }.reject(&:empty?)
+  use_name_wrapper, use_path_wrapper = use_wrappers?(deep_value.delete(:wrappers))
 
-  use_wrapper = deep_value.key?(:use_wrapper) ? deep_value[:use_wrapper] : true
-  new_key = if name.size == 1
+  deep_value[:path] = use_path_wrapper ? [key, old_path].join('/') : old_path
+  new_key = if name.size == 1 && !use_name_wrapper
               deep_key
             else
-              use_wrapper ? [name.first.presence || key, deep_key].join('_').to_sym : deep_key
+              use_name_wrapper ? [key, deep_key].join('_').to_sym : deep_key
             end
   scheme[new_key] = deep_value
+end
+
+def use_wrappers?(wrappers)
+  default = [true, false]
+  return default if wrappers.nil?
+
+  if wrappers.key?(:all)
+    all = to_bool!(wrappers[:all])
+    default = [all, all]
+  else
+    default = [to_bool!(wrappers[:name]), default[1]] if wrappers.key?(:name)
+    default = [default[0], to_bool!(wrappers[:path])] if wrappers.key?(:path)
+  end
+
+  default
+end
+
+def to_bool!(value)
+  convert_options = { 'true' => true, true => true, 'false' => false, false => false }
+
+  convert_options[value]
 end
