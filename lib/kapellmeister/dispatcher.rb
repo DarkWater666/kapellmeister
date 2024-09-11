@@ -1,4 +1,6 @@
 require 'faraday/follow_redirects'
+require 'faraday/typhoeus'
+require 'faraday/multipart'
 require_relative 'requests_extension'
 
 class Kapellmeister::Dispatcher
@@ -40,6 +42,7 @@ class Kapellmeister::Dispatcher
     additional_headers = data.delete(:headers) || {}
     requests_data = data.delete(:request) || {}
     data_json = data.blank? ? '' : data.to_json
+    additional_headers['Content-Length'] = requests_data.merge(data).to_s.bytesize
 
     generated_connection = connection(additional_headers: additional_headers, requests_data: requests_data) # rubocop:disable Style/HashSyntax (for support ruby 2.4+)
 
@@ -53,9 +56,9 @@ class Kapellmeister::Dispatcher
   end
 
   def connection(additional_headers:, requests_data:)
-    @connection ||= ::Faraday.new(url: configuration.url,
-                                  headers: headers_generate(**additional_headers),
-                                  request: requests_generate(**requests_data)) do |faraday|
+    request = requests_generate(**requests_data)
+    headers = headers_generate(**additional_headers)
+    @connection ||= ::Faraday.new(url: configuration.url, headers: headers, request: request) do |faraday| # rubocop:disable Style/HashSyntax (for support ruby 2.4+)
       faraday.request :json, content_type: 'application/json; charset=utf-8'
       faraday.request :multipart
       faraday.response :logger, logger

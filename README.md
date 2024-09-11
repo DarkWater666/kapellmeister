@@ -4,9 +4,9 @@
 ## Использование
 
 Добавьте kapellmeister в свой Gemfile:
-На данный момент последняя версия 0.9.9.rc2 (Проект находится в стадии тестирования работоспособности, beta-test)
+На данный момент последняя версия 0.10.0 (Проект находится в стадии тестирования работоспособности, beta-test)
 ```ruby
-gem 'kapellmeister', '~> 0.9.9.rc2'
+gem 'kapellmeister', '~> 0.10.0'
 ```
 
 ### Добавьте новую конфигурацию для стороннего API:
@@ -137,9 +137,9 @@ This template-service allows you to define http requests to a third party throug
 ## Usage
 
 Add kapellmeister to your Gemfile:
-At the moment, the latest version is 0.9.9.rc2 (The project is in the stage of performance testing, beta-test)
+At the moment, the latest version is 0.10.0 (The project is in the stage of performance testing, beta-test)
 ```ruby
-gem 'kapellmeister', '~> 0.9.9.rc2'
+gem 'kapellmeister', '~> 0.10.0'
 ```
 
 ### Add a new configuration for the third-party API:
