@@ -42,7 +42,7 @@ class Kapellmeister::Dispatcher
     additional_headers = data.delete(:headers) || {}
     requests_data = data.delete(:request) || {}
     data_json = data.blank? ? '' : data.to_json
-    additional_headers['Content-Length'] = requests_data.merge(data).to_s.bytesize
+    additional_headers['Content-Length'] = requests_data.merge(data).to_s.bytesize unless get?(method_name)
 
     generated_connection = connection(additional_headers: additional_headers, requests_data: requests_data) # rubocop:disable Style/HashSyntax (for support ruby 2.4+)
 
@@ -98,7 +98,7 @@ class Kapellmeister::Dispatcher
       url_part.ascii_only? ? url_part : CGI.escape(url_part)
     end.join('/')
 
-    url = url_repacking(url, data) if method_name == 'GET'
+    url = url_repacking(url, data) if get?(method_name)
 
     return url if query_params.blank?
 
@@ -110,6 +110,10 @@ class Kapellmeister::Dispatcher
     params = URI.decode_www_form(uri.query || '').to_h.merge(queries)
     uri.query = URI.encode_www_form(params)
     uri.to_s
+  end
+
+  def get?(method_name)
+    method_name.downcase.to_sym.eql?(:get)
   end
 
   def failed_response(**args)
